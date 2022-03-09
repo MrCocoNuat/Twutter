@@ -64,4 +64,9 @@ local.properties
 build
 import-summary.txt
 
+# duh. Look in the string resources if you really want it.
 apikey.properties
+
+# backup files
+*~
+
