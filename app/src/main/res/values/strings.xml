@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Twutter</string>
+    <string name="login_label">Log in</string>
+    <string name="intent_scheme">oauth</string>
+    <string name="intent_host">cprest</string>
+    <string name="sample_text">SAMPLE ajlfkasj ;aj ;lsjfa;slkj]df jfsdakfjsldfjl jdsal kjdsla joise jlakdjfa pncasdlkfj alksdjf</string>
+    <string name="sample_username">\@username</string>
+    <string name="sample_displayname">Displayname</string>
+    <string name="sample_time">60s</string>
+
+</resources>
