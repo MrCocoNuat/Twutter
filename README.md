@@ -11,7 +11,7 @@ The following **required** functionality is completed:
 - [x] User can **sign in to Twitter** using OAuth login
 - [x]	User can **view tweets from their home timeline**
   - [x] User is displayed the username, name, and body for each tweet
-  - [x] User is displayed the [relative](app/src/main/java/Tweet.kt) timestamp for each tweet "8m", "7h"
+  - [x] User is displayed the [relative](app/src/main/java/Tweet.kt) timestamp (with modern kt!) for each tweet "8m", "7h"
 - [x] User can refresh tweets timeline by pulling down to refresh
 
 The following **optional** features are implemented:
