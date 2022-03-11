@@ -9,5 +9,7 @@
     <string name="sample_username">\@username</string>
     <string name="sample_displayname">Displayname</string>
     <string name="sample_time">60s</string>
+    <string name="sample_fav_count">SAMPLE 213</string>
+    <string name="sample_rt_count">SAMPLE 102</string>
 
 </resources>

@@ -14,17 +14,21 @@ import com.codepath.apps.restclienttemplate.TwitterApplication
 import com.codepath.apps.restclienttemplate.TwitterClient
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler
 import okhttp3.Headers
-import org.json.JSONObject
+import java.security.KeyStore
 
 class TimelineActivity : AppCompatActivity() {
 
-    // if false, actually make API calls
-    val dummy = false
+    lateinit var client: TwitterClient
 
-    lateinit var client : TwitterClient
-    private lateinit var rvTimeline : RecyclerView
-    private lateinit var swipeContainer : SwipeRefreshLayout
+    private lateinit var rvTimeline: RecyclerView
+    private lateinit var swipeContainer: SwipeRefreshLayout
+
+
     val timelineTweets = mutableListOf<Tweet>()
+    private var oldestTweetId: Long = -1
+    // handle when to load more for infinite scroll
+    var lastKnownSize = 0
+    var loadMoreReady = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,38 +43,89 @@ class TimelineActivity : AppCompatActivity() {
 
         swipeContainer = findViewById(R.id.swipeContainer)
         swipeContainer.setOnRefreshListener {
-            getTimeline()
+            renewTimeline()
         }
 
         rvTimeline = findViewById(R.id.rvTimeline)
-        rvTimeline.adapter = TweetItemAdapter(this,timelineTweets)
+
+        rvTimeline.adapter = TweetItemAdapter(this,
+            timelineTweets,
+            object : TweetItemAdapter.OutOfItemsListener{
+                override fun outOfItems(previousSize: Int) {
+                    if (loadMoreReady) {
+                        Log.i("TimelineActivity", "Complying: loading more items")
+                        loadMoreReady = false
+                        extendTimeline()
+                    }
+                    else if (previousSize > lastKnownSize){
+                        Log.i("TimelineActivity","Ready to load more items next call")
+                        loadMoreReady = true
+                        lastKnownSize = previousSize
+                    }
+                    else {
+                        Log.i("TimelineActivity","Refused to load more items")
+                    }
+                }
+            })
         rvTimeline.layoutManager = LinearLayoutManager(this)
 
-        getTimeline()
+        renewTimeline()
     }
 
-    fun getTimeline(){
-        client.getHomeTimeline(object : JsonHttpResponseHandler(){
+    //trashes current contents
+    fun renewTimeline() {
+        client.getHomeTimeline(object : JsonHttpResponseHandler() {
             override fun onFailure(
                 statusCode: Int,
                 headers: Headers?,
                 response: String?,
                 throwable: Throwable?
             ) {
-                Log.e("TimelineActivity","Error from API $statusCode: $response")
-                swipeContainer.isRefreshing=false
+                Log.e("TimelineActivity", "Error from API $statusCode: $response")
+                reflectTimelineChanges()
             }
 
             @RequiresApi(Build.VERSION_CODES.O)
             override fun onSuccess(statusCode: Int, headers: Headers?, json: JSON) {
                 timelineTweets.clear()
-                for (i in 0 until json.jsonArray.length()){
+                lastKnownSize = 0
+                for (i in 0 until json.jsonArray.length()) {
                     timelineTweets.add(Tweet(json.jsonArray.getJSONObject(i)))
                 }
-                rvTimeline.adapter?.notifyDataSetChanged()
-                swipeContainer.isRefreshing = false
+                reflectTimelineChanges()
             }
         })
+    }
+
+    // does not trash current contents, only appends to end
+    fun extendTimeline() {
+        client.getHomeTimeline(object : JsonHttpResponseHandler() {
+            override fun onFailure(
+                statusCode: Int,
+                headers: Headers?,
+                response: String?,
+                throwable: Throwable?
+            ) {
+                Log.e("TimelineActivity", "Error from API $statusCode: $response")
+                reflectTimelineChanges()
+            }
+
+            @RequiresApi(Build.VERSION_CODES.O)
+            override fun onSuccess(statusCode: Int, headers: Headers?, json: JSON) {
+                loadMoreReady = false
+                for (i in 0 until json.jsonArray.length()) {
+                    timelineTweets.add(Tweet(json.jsonArray.getJSONObject(i)))
+                }
+                reflectTimelineChanges()
+            }
+        }, max_id = oldestTweetId)
+    }
+
+    fun reflectTimelineChanges() {
+        if (timelineTweets.size > 0)
+            oldestTweetId = timelineTweets[timelineTweets.size - 1].id
+        rvTimeline.adapter?.notifyDataSetChanged()
+        swipeContainer.isRefreshing = false
     }
 
 
@@ -80,6 +135,10 @@ class TimelineActivity : AppCompatActivity() {
 
 
 
+
+
+/*
+    // All Unused!
 
     // get the logged in user's id and call getFollowed on that id
     fun getUser() {
@@ -165,4 +224,6 @@ class TimelineActivity : AppCompatActivity() {
 
         })
     }
+    */
+
 }

@@ -61,4 +61,49 @@
         android:text="@string/sample_time"
         app:layout_constraintBottom_toBottomOf="@+id/tvDisplayname"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.55" />
+
+    <ImageView
+        android:id="@+id/ivRt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@+id/tvText"
+        app:layout_constraintTop_toBottomOf="@+id/tvText"
+        android:layout_margin="8dp"
+        app:srcCompat="@drawable/ic_retweet" />
+
+    <TextView
+        android:id="@+id/tvRtCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/sample_rt_count"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/guideline2"
+        app:layout_constraintStart_toEndOf="@+id/ivRt"
+        app:layout_constraintTop_toTopOf="@+id/ivRt" />
+
+    <ImageView
+        android:id="@+id/ivFav"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        app:layout_constraintStart_toStartOf="@+id/guideline2"
+        app:layout_constraintTop_toBottomOf="@+id/tvText"
+        app:srcCompat="@drawable/ic_fav" />
+
+    <TextView
+        android:id="@+id/tvFavCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/sample_fav_count"
+        app:layout_constraintBottom_toBottomOf="@+id/ivFav"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/ivFav"
+        app:layout_constraintTop_toTopOf="@+id/ivFav" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -13,7 +13,12 @@ import com.bumptech.glide.Glide
 import com.codepath.apps.restclienttemplate.R
 
 class TweetItemAdapter(private val context: Context,
-                       private val tweets: MutableList<Tweet>) : Adapter<TweetItemAdapter.ViewHolder>() {
+                       private val tweets: MutableList<Tweet>,
+                       val outOfItemsListener: OutOfItemsListener) : Adapter<TweetItemAdapter.ViewHolder>() {
+
+    interface OutOfItemsListener{
+        fun outOfItems(previousSize : Int)
+    }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
         private val profileView = itemView.findViewById<ImageView>(R.id.ivProfile)
@@ -21,6 +26,9 @@ class TweetItemAdapter(private val context: Context,
         private val timeView = itemView.findViewById<TextView>(R.id.tvTime)
         private val displaynameView = itemView.findViewById<TextView>(R.id.tvDisplayname)
         private val usernameView = itemView.findViewById<TextView>(R.id.tvUsername)
+        private val rtCountView = itemView.findViewById<TextView>(R.id.tvRtCount)
+        private val favCountView = itemView.findViewById<TextView>(R.id.tvFavCount)
+
 
         fun bind(tweet : Tweet){
             Glide.with(context)
@@ -31,6 +39,9 @@ class TweetItemAdapter(private val context: Context,
             displaynameView.text = tweet.displayname
             usernameView.text = tweet.username
             timeView.text = Tweet.relativeTimestamp(tweet.createdTimeStr)
+            rtCountView.text = tweet.rtCount.toString()
+            favCountView.text = tweet.favCount.toString()
+
         }
     }
 
@@ -46,6 +57,8 @@ class TweetItemAdapter(private val context: Context,
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val tweet = tweets[position]
         holder.bind(tweet)
-    }
 
+        // not many left to bind!
+        if (tweets.size - position < 5) outOfItemsListener.outOfItems(tweets.size)
+    }
 }

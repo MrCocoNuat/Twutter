@@ -56,6 +56,8 @@ class TwitterClient(context: Context) : OAuthBaseClient(
     fun getHomeTimeline(handler: JsonHttpResponseHandler, max_id: Long? = null, since_id: Long? = null){
         val apiUrl = getApiUrl("statuses/home_timeline.json")
         val params = RequestParams()
+        // loads 100 at a time
+        params.put("count",100)
         if (max_id != null) {
             params.put("max_id",max_id)
         }
