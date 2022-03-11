@@ -13,6 +13,10 @@ data class Tweet @RequiresApi(Build.VERSION_CODES.O) constructor(
     val createdTimeStr : String = tweetJson.getString("created_at"),
     val relativeTimestamp : String = relativeTimestamp(createdTimeStr),
     val user : JSONObject = tweetJson.getJSONObject("user"),
+    val displayname : String = user.getString("name"),
+    val username : String = "@"+user.getString("screen_name"),
+    val profileUrl : String = user.getString("profile_image_url_https"),
+    val text : String = tweetJson.getString("text"),
     val rtCount : Int = tweetJson.getInt("retweet_count"),
     val favCount : Int = tweetJson.getInt("favorite_count"),
     ){
@@ -20,11 +24,11 @@ data class Tweet @RequiresApi(Build.VERSION_CODES.O) constructor(
         @RequiresApi(Build.VERSION_CODES.O)
         fun relativeTimestamp(createdTime: String): String {
             val twitterFormatter = DateTimeFormatter.ofPattern("EEE MMM dd HH:mm:ss xx uuuu")
-            val createdTime : LocalDateTime = LocalDateTime.parse(createdTime, twitterFormatter) //local
+            val createdDateTime : LocalDateTime = LocalDateTime.parse(createdTime, twitterFormatter) //local
 
             val now : LocalDateTime = LocalDateTime.now(ZoneId.of("+0000")) //match timezones, yes this is hardcoded
 
-            val secondsAgo = createdTime.until(now,ChronoUnit.SECONDS)
+            val secondsAgo = createdDateTime.until(now,ChronoUnit.SECONDS)
             if (secondsAgo < 0){
                 Log.w("Tweet","Encountered a tweet from the future! Timezone error?")
             }

@@ -6,6 +6,9 @@ import android.os.Bundle
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.codepath.apps.restclienttemplate.R
 import com.codepath.apps.restclienttemplate.TwitterApplication
 import com.codepath.apps.restclienttemplate.TwitterClient
@@ -19,8 +22,9 @@ class TimelineActivity : AppCompatActivity() {
     val dummy = false
 
     lateinit var client : TwitterClient
+    private lateinit var rvTimeline : RecyclerView
+    private lateinit var swipeContainer : SwipeRefreshLayout
     val timelineTweets = mutableListOf<Tweet>()
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,6 +36,15 @@ class TimelineActivity : AppCompatActivity() {
         // using Twitter API v2, not v1.1
         // TODO incomplete
         //getUser()
+
+        swipeContainer = findViewById(R.id.swipeContainer)
+        swipeContainer.setOnRefreshListener {
+            getTimeline()
+        }
+
+        rvTimeline = findViewById(R.id.rvTimeline)
+        rvTimeline.adapter = TweetItemAdapter(this,timelineTweets)
+        rvTimeline.layoutManager = LinearLayoutManager(this)
 
         getTimeline()
     }
@@ -45,23 +58,21 @@ class TimelineActivity : AppCompatActivity() {
                 throwable: Throwable?
             ) {
                 Log.e("TimelineActivity","Error from API $statusCode: $response")
+                swipeContainer.isRefreshing=false
             }
 
             @RequiresApi(Build.VERSION_CODES.O)
             override fun onSuccess(statusCode: Int, headers: Headers?, json: JSON) {
+                timelineTweets.clear()
                 for (i in 0 until json.jsonArray.length()){
                     timelineTweets.add(Tweet(json.jsonArray.getJSONObject(i)))
                 }
-                json
-
+                rvTimeline.adapter?.notifyDataSetChanged()
+                swipeContainer.isRefreshing = false
             }
-
         })
     }
 
-    fun displayTimeline(){
-
-    }
 
 
 
