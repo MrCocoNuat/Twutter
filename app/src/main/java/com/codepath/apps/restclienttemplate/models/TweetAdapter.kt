@@ -14,7 +14,7 @@ import com.codepath.apps.restclienttemplate.R
 
 class TweetItemAdapter(private val context: Context,
                        private val tweets: MutableList<Tweet>,
-                       val outOfItemsListener: OutOfItemsListener) : Adapter<TweetItemAdapter.ViewHolder>() {
+                       private val outOfItemsListener: OutOfItemsListener) : Adapter<TweetItemAdapter.ViewHolder>() {
 
     interface OutOfItemsListener{
         fun outOfItems(previousSize : Int)

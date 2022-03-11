@@ -14,7 +14,6 @@ import com.codepath.apps.restclienttemplate.TwitterApplication
 import com.codepath.apps.restclienttemplate.TwitterClient
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler
 import okhttp3.Headers
-import java.security.KeyStore
 
 class TimelineActivity : AppCompatActivity() {
 
