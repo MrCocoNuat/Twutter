@@ -16,7 +16,7 @@ The following **required** functionality is completed:
 
 The following **optional** features are implemented:
 
-- [x] User can view more tweets as they scroll with infinite pagination
+- [x] User can view more tweets as they scroll with janky infinite pagination
 - [x] Improve the user interface and theme the app to feel "twitter branded"
   - [x] Vector icons for RT and fav (recommended icon download seems to be down?)
 - [ ] Links in tweets are clickable and will launch the web browser
@@ -34,6 +34,7 @@ The following **additional** features are implemented:
 
 Here's a walkthrough of implemented user stories:
 
+![Logging in](github_assets/login.gif) ![Pull-To-Refresh](github_assets/refresh.gif)
 
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
