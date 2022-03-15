@@ -2,11 +2,13 @@ import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import org.json.JSONObject
+import org.parceler.Parcel
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import java.time.ZoneId
 
+@Parcel
 data class Tweet @RequiresApi(Build.VERSION_CODES.O) constructor(
     val tweetJson: JSONObject,
     val id : Long = tweetJson.getLong("id"),

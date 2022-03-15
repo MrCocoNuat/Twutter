@@ -4,8 +4,11 @@ import Tweet
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -80,7 +83,7 @@ class TimelineActivity : AppCompatActivity() {
                 response: String?,
                 throwable: Throwable?
             ) {
-                Log.e("TimelineActivity", "Error from API $statusCode: $response")
+                Log.e("TimelineActivity", "getHomeTimeline: Error from API $statusCode: $response")
                 reflectTimelineChanges()
             }
 
@@ -105,7 +108,7 @@ class TimelineActivity : AppCompatActivity() {
                 response: String?,
                 throwable: Throwable?
             ) {
-                Log.e("TimelineActivity", "Error from API $statusCode: $response")
+                Log.e("TimelineActivity", "getHomeTimeline: Error from API $statusCode: $response")
                 reflectTimelineChanges()
             }
 
@@ -125,6 +128,46 @@ class TimelineActivity : AppCompatActivity() {
             oldestTweetId = timelineTweets[timelineTweets.size - 1].id
         rvTimeline.adapter?.notifyDataSetChanged()
         swipeContainer.isRefreshing = false
+    }
+
+    // layout on-click
+    fun showComposeDialog(view: View){
+        val composeDialogListener = object : ComposeDialogFragment.ComposeDialogListener{
+            override fun onDialogPositiveClick(dialog: DialogFragment) {
+                dialog as ComposeDialogFragment //cast will succeed
+
+                val tweetText = dialog.dialogView.findViewById<TextView>(R.id.etComposeText).text.toString()
+
+                // construct the Tweet object backwards! POSTing to twitter returns the single tweet back, tack it on to list of tweets
+                client.postTweet(object : JsonHttpResponseHandler(){
+                    override fun onFailure(
+                        statusCode: Int,
+                        headers: Headers?,
+                        response: String?,
+                        throwable: Throwable?
+                    ) {
+                        Log.e("TimelineActivity", "postTweet: Error from API $statusCode: $response")
+                        // no change to notify adapter about
+                    }
+
+                    override fun onSuccess(statusCode: Int, headers: Headers?, json: JSON) {
+                        val newTweet = Tweet(json.jsonObject)
+                        timelineTweets.add(0, newTweet)  //stuff the new tweet onto the timeline manually
+                        reflectTimelineChanges()
+                    }
+
+                }, tweetText)
+            }
+
+            override fun onDialogNegativeClick(dialog: DialogFragment) {
+                // do nothing
+                // identical to pressing back button
+            }
+
+        }
+
+        val frag = ComposeDialogFragment(composeDialogListener)
+        frag.show(supportFragmentManager, "dialog_compose")
     }
 
 

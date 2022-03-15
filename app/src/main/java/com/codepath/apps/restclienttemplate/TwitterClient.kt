@@ -1,5 +1,6 @@
 package com.codepath.apps.restclienttemplate
 
+import android.app.DownloadManager
 import android.content.Context
 import com.codepath.asynchttpclient.RequestParams
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler
@@ -64,7 +65,13 @@ class TwitterClient(context: Context) : OAuthBaseClient(
         client.get(apiUrl,params,handler)
     }
 
+    fun postTweet(handler: JsonHttpResponseHandler, text : String){
+        val apiUrl = getApiUrl("statuses/update.json")
+        val params = RequestParams()
 
+        params.put("status", text)
+        client.post(apiUrl, params, "", handler)
+    }
 
 
 
